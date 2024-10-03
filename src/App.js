@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
-import { ChevronDown, Upload, RefreshCw, Download } from 'lucide-react';
-
-
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, Upload, RefreshCw, Download, Check } from 'lucide-react';
+import CertificateGuide from './components/CertificateGuide';
 
 const App = () => {
   const [template, setTemplate] = useState(null);
@@ -18,6 +17,9 @@ const App = () => {
   const [message, setMessage] = useState('');
   const [fonts, setFonts] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
+  const [templateFileName, setTemplateFileName] = useState('');
+  const [participantsFileName, setParticipantsFileName] = useState('');
+  const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
 
   const canvasRef = useRef(null);
 
@@ -58,18 +60,21 @@ const App = () => {
       ctx.drawImage(img, 0, 0);
       ctx.font = `${fontSize}px ${fontFamily}`;
       ctx.fillStyle = fontColor;
-      ctx.textAlign = 'center';
-      ctx.fillText('Sample Name', canvas.width / 2, yPosition);
+      ctx.fillText('SAMPLE NAME', xPosition, yPosition);
     };
     img.src = previewImage;
   };
 
   const handleTemplateChange = (e) => {
-    setTemplate(e.target.files[0]);
+    const file = e.target.files[0];
+    setTemplate(file);
+    setTemplateFileName(file.name);
   };
 
   const handleParticipantsChange = (e) => {
-    setParticipants(e.target.files[0]);
+    const file = e.target.files[0];
+    setParticipants(file);
+    setParticipantsFileName(file.name);
   };
 
   const handleSubmit = async (e) => {
@@ -111,6 +116,8 @@ const App = () => {
       link.remove();
 
       setMessage('Certificates generated successfully!');
+      setShowCompletionAnimation(true);
+      setTimeout(() => setShowCompletionAnimation(false), 3000);
     } catch (error) {
       console.error('Error generating certificates:', error);
       setMessage('An error occurred while generating certificates. Please try again.');
@@ -122,13 +129,14 @@ const App = () => {
 
   return (
     <div className="app">
+       <CertificateGuide/>
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="title"
       >
-        Advanced Certificate Generator
+        Certificate Generator
       </motion.h1>
 
       <div className="container">
@@ -145,7 +153,10 @@ const App = () => {
                 <label className="file-upload-label">
                   <div className="file-upload-content">
                     <Upload className="icon" />
-                    <p className="file-upload-text"><span className="bold">Click to upload</span> or drag and drop</p>
+                    <p className="file-upload-text">
+                      <span className="bold">Click to upload</span> or drag and drop
+                    </p>
+                    {templateFileName && <p className="file-name">{templateFileName}</p>}
                   </div>
                   <input type="file" className="file-input" onChange={handleTemplateChange} accept="image/png" required />
                 </label>
@@ -158,7 +169,10 @@ const App = () => {
                 <label className="file-upload-label">
                   <div className="file-upload-content">
                     <Upload className="icon" />
-                    <p className="file-upload-text"><span className="bold">Click to upload</span> or drag and drop</p>
+                    <p className="file-upload-text">
+                      <span className="bold">Click to upload</span> or drag and drop
+                    </p>
+                    {participantsFileName && <p className="file-name">{participantsFileName}</p>}
                   </div>
                   <input type="file" className="file-input" onChange={handleParticipantsChange} accept=".txt" required />
                 </label>
@@ -207,6 +221,17 @@ const App = () => {
             </div>
 
             <div className="form-group">
+              <label className="label">X Position (px)</label>
+              <input
+                type="number"
+                value={xPosition}
+                onChange={(e) => setXPosition(e.target.value)}
+                required
+                className="input"
+              />
+            </div>
+
+            <div className="form-group">
               <label className="label">Y Position (px)</label>
               <input
                 type="number"
@@ -249,15 +274,18 @@ const App = () => {
         </motion.div>
       </div>
 
-      {message && (
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="message"
-        >
-          {message}
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {message && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="message"
+          >
+            {message}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {loading && (
         <div className="loader-overlay">
@@ -270,7 +298,22 @@ const App = () => {
         </div>
       )}
 
+      <AnimatePresence>
+        {showCompletionAnimation && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="completion-animation"
+          >
+            <Check className="check-icon" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    
+
       <style jsx>{`
+        /* Styles go here, including any new styles for the completion GIF */
         .app {
           min-height: 100vh;
           background-color: #1a202c;
@@ -359,6 +402,12 @@ const App = () => {
 
         .file-input {
           display: none;
+        }
+
+        .file-name {
+          margin-top: 0.5rem;
+          font-size: 0.75rem;
+          color: #a0aec0;
         }
 
         .select, .input {
@@ -477,13 +526,7 @@ const App = () => {
           font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-          .container {
-            grid-template-columns: 1fr;
-          }
-        }
-
- .loader-overlay {
+        .loader-overlay {
           position: fixed;
           top: 0;
           left: 0;
@@ -533,7 +576,45 @@ const App = () => {
           font-weight: bold;
         }
 
+        .completion-animation {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: #48bb78;
+          border-radius: 50%;
+          width: 100px;
+          height: 100px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1001;
+        }
+
+        .check-icon {
+          color: #ffffff;
+          width: 60px;
+          height: 60px;
+        }
+
+        .completion-gif {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1001;
+        }
+
+        .completion-gif img {
+          width: 100px;
+          height: 100px;
+        }
+
         @media (max-width: 768px) {
+          .container {
+            grid-template-columns: 1fr;
+          }
+
           .loader-circle {
             width: 100px;
             height: 100px;
@@ -541,6 +622,21 @@ const App = () => {
 
           .loader-text {
             font-size: 1rem;
+          }
+
+          .completion-animation {
+            width: 80px;
+            height: 80px;
+          }
+
+          .check-icon {
+            width: 50px;
+            height: 50px;
+          }
+
+          .completion-gif img {
+            width: 80px;
+            height: 80px;
           }
         }
       `}</style>
