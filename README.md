@@ -2,7 +2,8 @@
 
 An elegant and powerful web application that allows you to generate customized certificates in bulk for events, courses, or any other purpose. Upload your certificate template and participant list, customize the text appearance, and generate professional-looking certificates with just a few clicks.
 
-![Certificate Generator Preview](https://via.placeholder.com/800x400)
+![Certificate Generator Preview](![image](https://github.com/user-attachments/assets/cad4b51a-b8fd-463a-825c-45bb81d97355)
+)
 
 ## 🌟 Features
 
