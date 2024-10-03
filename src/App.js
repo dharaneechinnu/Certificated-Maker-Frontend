@@ -295,39 +295,46 @@ const App = () => {
       </AnimatePresence>
 
       {loading && (
-        <div className="loader-overlay">
-          <div className="loader-content">
-            <div className="loader-circle">
-              <div className="loader-circle-inner" style={{ width: `${progress}%` }}></div>
-            </div>
-            <div className="loader-text">{progress}% Complete</div>
-          </div>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {showCompletionAnimation && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            className="completion-animation"
-          >
-            <Check className="check-icon" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {showTrickMark && ( // Conditional rendering for the trick mark animation
+  <div className="loader-overlay">
+    <div className="loader-content">
+      <div className="loader-circle">
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          className="trick-mark"
-        >
-          <Check className="trick-mark-icon" />
-        </motion.div>
-      )}
+          className="loader-circle-inner"
+          initial={{ width: "0%" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        />
+      </div>
+      <div className="loader-text">{progress}% Complete</div>
+    </div>
+  </div>
+)}
+
+<AnimatePresence>
+  {showCompletionAnimation && (
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0 }}
+      className="completion-animation"
+    >
+      <Check className="check-icon" />
+    </motion.div>
+  )}
+</AnimatePresence>
+
+<AnimatePresence>
+  {showTrickMark && (
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0 }}
+      className="trick-mark"
+    >
+      <Check className="trick-mark-icon" />
+    </motion.div>
+  )}
+</AnimatePresence>
 
       <style jsx>{`
         /* Styles go here, including any new styles for the completion GIF */
@@ -338,6 +345,92 @@ const App = () => {
           padding: 2rem;
           font-family: Arial, sans-serif;
         }
+
+        .loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+  }
+
+  .loader-content {
+    background-color: #2d3748;
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+  }
+
+  .loader-circle {
+    width: 150px;
+    height: 150px;
+    background-color: #4a5568; /* Keep the circle color dark */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .loader-circle-inner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #48bb78; /* Change this color to the desired one */
+    transition: width 0.3s ease;
+  }
+
+  .loader-text {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .completion-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #48bb78;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+  }
+
+  .check-icon {
+    color: #ffffff;
+    width: 60px;
+    height: 60px;
+  }
+
+  .trick-mark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    background-color: transparent;
+  }
+
+  .trick-mark-icon {
+    color: #48bb78; // The color for the trick mark
+    width: 50px;
+    height: 50px;
+  }
 
         .title {
           font-size: 2.5rem;
@@ -583,7 +676,7 @@ const App = () => {
           left: 0;
           width: 0%;
           height: 100%;
-          background-color: #4299e1;
+          background-color: #42a5e1;
           transition: width 0.3s ease;
         }
 
