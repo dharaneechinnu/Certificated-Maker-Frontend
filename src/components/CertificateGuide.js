@@ -291,9 +291,7 @@ const CertificateGuide = () => {
         }
 
         .start-guide {
-          position: absolute;
-          bottom: 24px;
-          right: 24px;
+          margin-top: 20px; /* Add margin to push it down */
           background: #3b82f6;
           color: #fff;
           border: none;

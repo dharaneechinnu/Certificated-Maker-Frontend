@@ -20,6 +20,7 @@ const App = () => {
   const [templateFileName, setTemplateFileName] = useState('');
   const [participantsFileName, setParticipantsFileName] = useState('');
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
+  const [showTrickMark, setShowTrickMark] = useState(false); // New state for trick mark
 
   const canvasRef = useRef(null);
 
@@ -104,6 +105,12 @@ const App = () => {
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setProgress(percentCompleted);
+
+          if (percentCompleted === 100) {
+            // Show trick mark animation
+            setShowTrickMark(true);
+            setTimeout(() => setShowTrickMark(false), 3000); // Hide after 3 seconds
+          }
         },
       });
 
@@ -310,7 +317,17 @@ const App = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    
+
+      {showTrickMark && ( // Conditional rendering for the trick mark animation
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0 }}
+          className="trick-mark"
+        >
+          <Check className="trick-mark-icon" />
+        </motion.div>
+      )}
 
       <style jsx>{`
         /* Styles go here, including any new styles for the completion GIF */
@@ -597,17 +614,19 @@ const App = () => {
           height: 60px;
         }
 
-        .completion-gif {
+        .trick-mark {
           position: fixed;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           z-index: 1001;
+          background-color: transparent;
         }
 
-        .completion-gif img {
-          width: 100px;
-          height: 100px;
+        .trick-mark-icon {
+          color: #48bb78; // The color for the trick mark
+          width: 50px;
+          height: 50px;
         }
 
         @media (max-width: 768px) {
@@ -632,11 +651,6 @@ const App = () => {
           .check-icon {
             width: 50px;
             height: 50px;
-          }
-
-          .completion-gif img {
-            width: 80px;
-            height: 80px;
           }
         }
       `}</style>
