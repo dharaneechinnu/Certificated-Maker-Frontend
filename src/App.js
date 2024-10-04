@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Upload, RefreshCw, Download, Check } from 'lucide-react';
+import {  Upload, RefreshCw, Download, Check } from 'lucide-react';
 import CertificateGuide from './components/CertificateGuide';
+import Api from './Api/Api';
 
 const App = () => {
   const [template, setTemplate] = useState(null);
@@ -27,7 +27,7 @@ const App = () => {
   useEffect(() => {
     const fetchFonts = async () => {
       try {
-        const response = await axios.get('https://certificated-maker.onrender.com/fonts');
+        const response = await Api.get('/fonts');
         setFonts(response.data);
       } catch (error) {
         console.error('Error fetching fonts:', error);
@@ -99,7 +99,7 @@ const App = () => {
       setProgress(0);
       setMessage('');
 
-      const response = await axios.post('https://certificated-maker.onrender.com/generate-certificates', formData, {
+      const response = await Api.post('/generate-certificates', formData, {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (progressEvent) => {
