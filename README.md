@@ -120,9 +120,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Icons by Lucide React
 - Animation library by Framer Motion
 
-## 📧 Contact
-
-For support or queries, please email: support@certificategenerator.example.com
 
 ## 🐛 Known Issues
 
@@ -130,4 +127,3 @@ For support or queries, please email: support@certificategenerator.example.com
 - Maximum file size for template: 5MB
 - Maximum participants in single generation: 1000
 
-Please report any other issues in the GitHub repository's issue tracker.
